@@ -1,0 +1,27 @@
+#%RAML 1.0 Library
+types:
+  get_oppurtunityby_Id_response:
+    description: retrieving by id
+    type: array
+    items:
+      properties:
+        name:
+          description: name of the company
+          type: string
+          required: true
+        amount:
+          description: amount of the product
+          type: number
+          required: true
+        closedate:
+          description: date that the product is closed
+          type: string
+          required: true
+        stage:
+          description: status of the opportunity
+          type: string
+          required: true
+        forecastcategory:
+          description: forecasting future sales revenue
+          type: string
+          required: true

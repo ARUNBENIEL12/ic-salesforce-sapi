@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="getting_opportunities_by_Id" doc:id="1140c654-4b8f-4a37-adb9-1ec54b583c89" >
+		<logger level="INFO" doc:name="retrieving a particular user by Id implementation gets started" doc:id="bd9f34e8-6e1e-4609-b636-3ae2199fedc9" message="getting_opportunities_by_Id_started"/>
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable for storing id" doc:id="53466766-82c7-448a-ae25-bbd0c980d238" variableName="id" />
+		<salesforce:query doc:name="Query to get user only  by Id" doc:id="05508291-402d-4163-80ce-5d2cb3fc5ca1" config-ref="Salesforce_Config1">
+			<salesforce:salesforce-query ><![CDATA[SELECT AccountId,Amount,CampaignId,CloseDate,ContactId,CreatedById,CreatedDate,CurrentGenerators__c,DeliveryInstallationStatus__c,Description,ExpectedRevenue,Fiscal,FiscalQuarter,FiscalYear,ForecastCategory,ForecastCategoryName,HasOpenActivity,HasOpportunityLineItem,HasOverdueTask,Id,IsClosed,IsDeleted,IsPrivate,IsWon,LastActivityDate,LastAmountChangedHistoryId,LastCloseDateChangedHistoryId,LastModifiedById,LastModifiedDate,LastReferencedDate,LastStageChangeDate,LastViewedDate,LeadSource,MainCompetitors__c,Name,NextStep,OrderNumber__c,OwnerId,Pricebook2Id,Probability,PushCount,StageName,SystemModstamp,TotalOpportunityQuantity,TrackingNumber__c,Type FROM Opportunity
+where Id = ':id']]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[{"id": vars.id}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="taking response from query as payload" doc:id="5a61c287-3189-45b0-86ff-864fb634b3c0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	id:attributes.uriParams.id
+	,amount: payload01.Amount default 0,
+	closedate: payload01.CloseDate as String default "",
+	stage: payload01.StageName default "",
+	name: payload01.Name default "",
+	forecastcategory: payload01.ForecastCategoryName default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="retrieving a particular user by Id implementation gets ended" doc:id="b876e75e-7b00-4ef6-9a6e-8ac4dd308982" message="getting_opportunities_by_Id_ended"/>
+	</sub-flow>
+	<sub-flow name="getting_all_opportunities" doc:id="d454963c-e05c-4241-a95f-6411ba0699cf" >
+		<logger level="INFO" doc:name="getting all the opportunities of the salesforce implementation flow started" doc:id="f6372d4c-01ae-4459-a47d-9ed871327e64" message="getting_all_opportunities_started"/>
+		<salesforce:query-all doc:name="Query from get all tasks  from salesforce" doc:id="3784291b-9d96-4e95-a47a-6c4983051cee" config-ref="Salesforce_Config1">
+			<salesforce:salesforce-query ><![CDATA[SELECT AccountId,Amount,CampaignId,CloseDate,ContactId,CreatedById,CreatedDate,CurrentGenerators__c,DeliveryInstallationStatus__c,Description,ExpectedRevenue,Fiscal,FiscalQuarter,FiscalYear,ForecastCategory,ForecastCategoryName,HasOpenActivity,HasOpportunityLineItem,HasOverdueTask,Id,IsClosed,IsDeleted,IsPrivate,IsWon,LastActivityDate,LastAmountChangedHistoryId,LastCloseDateChangedHistoryId,LastModifiedById,LastModifiedDate,LastReferencedDate,LastStageChangeDate,LastViewedDate,LeadSource,MainCompetitors__c,Name,NextStep,OrderNumber__c,OwnerId,Pricebook2Id,Probability,PushCount,StageName,SystemModstamp,TotalOpportunityQuantity,TrackingNumber__c,Type FROM Opportunity]]></salesforce:salesforce-query>
+		</salesforce:query-all>
+		<ee:transform doc:name="Dw get all task  response from salesforce" doc:id="f982fe2e-5ae3-4631-9672-e7a37a437a78" >
+			<ee:message >
+				<ee:set-payload resource="getallopportunities.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="getting all the opportunities of the salesforce implementation flow ended" doc:id="4c7ebca8-a39a-4169-a6e0-d4c83a5c3f50" message="getting_all_opportunities_ended"/>
+	</sub-flow>
+	<sub-flow name="delete_opportunity_by_id" doc:id="9601d350-2a4b-4bd6-9e04-cebab55b2d07" >
+		<logger level="INFO" doc:name="deleting a particular opportunity by Id implementation get started" doc:id="330fbff9-68cb-4901-a3b4-eaaaa200f0fe" message="delete_opportunity_by_id_started"/>
+		<ee:transform doc:name="giving a particular for deleting that opportunity" doc:id="34d8aee7-3b54-4c6c-99ae-8bd3946de66f" >
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[attributes.uriParams.'id']]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<salesforce:delete doc:name="taking a particular Id from the transform message and deleting the Id" doc:id="5f1ace1a-d8c4-4f88-bfa7-869b8029e0b0" config-ref="Salesforce_Config1">
+			<salesforce:ids ><![CDATA[#[[vars.id]]]]></salesforce:ids>
+		</salesforce:delete>
+		<ee:transform doc:name="Transform Message1" doc:id="07f22a71-b710-4b26-8f7c-08da2f9fb0e5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  is_success: true,
+  error: []
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="deleting a particular opportunity by Id implementation get ended" doc:id="3925071e-59f9-435d-84fc-b6e5f9177c2c" message="delete_opportunity_by_id_ended"/>
+	</sub-flow>
+	<sub-flow name="update_opportunity_by_id" doc:id="e2f38be4-786d-46e8-8cc0-8c86b28231be" >
+		<logger level="INFO" doc:name="updating a particular user in the salesforce implementation get started" doc:id="7e129dc3-f1e6-4c39-aa1b-e07362144d60" message="update_opportunity_by_id_started"/>
+		<ee:transform doc:name="Transform Message1" doc:id="5436846d-76e2-48cb-aa25-fea53a6f0749" >
+			<ee:message >
+				<ee:set-payload resource="putopportunity.dwl" />
+			</ee:message>
+		</ee:transform>
+		<salesforce:update type="Opportunity" doc:name="updating a particular user by Id that is taken from the transform message" doc:id="a584509c-a570-4978-9b8b-c5ad78bd2ef9" config-ref="Salesforce_Config1"/>
+		<ee:transform doc:name="Transform Message2" doc:id="1567b1b1-3d99-419a-9a9b-0b796c56d30c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+        "is_success": payload.items.successful,
+        "response": payload.items map(item,index) ->{
+        "payload": item.payload
+    }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="updating a particular user in the salesforce implementation get ended" doc:id="63a84844-530e-4fd3-8a04-f43e2b02ab98" message="update_opportunity_by_id_ended"/>
+	</sub-flow>
+	<sub-flow name="create_opportunity" doc:id="e71af8ee-30d1-4fe3-a76e-ae0c85a6c3c3" >
+		<logger level="INFO" doc:name="creating a new opportunity in a salesforce implementation get started" doc:id="6ffc43b2-b0cf-465c-b02e-c6f25fe74d11" message="create_opportunity_started"/>
+		<ee:transform doc:name="Dw set create a new opportunity request transform" doc:id="561e46a3-4320-4c7b-8dcd-eadf0a1960f9" >
+			<ee:message >
+				<ee:set-payload resource="createopportunity.dwl" />
+			</ee:message>
+		</ee:transform>
+		<salesforce:create type="Opportunity" doc:name="creating a new user and the payload is taken from the transform message" doc:id="2023fc98-8bac-4461-a537-020d98bbbca1" config-ref="Salesforce_Config1"/>
+		<ee:transform doc:name="Transform Message1" doc:id="a093b3ea-523b-4acb-b326-dc52853e2b12" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+        "is_success": payload.items.successful,
+    "response": payload.items map(item,index) ->{
+        "payload": item.payload
+    }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="creating a new opportunity in a salesforce implementation get ended" doc:id="75a4db8a-838a-430a-8a02-28668d837883" message="create_opportunity_ended"/>
+	</sub-flow>
+</mule>

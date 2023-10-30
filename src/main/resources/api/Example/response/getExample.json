@@ -1,0 +1,16 @@
+[{
+  "id": "001D000000KQO2X",
+  "name": "ARUN",
+  "amount": 10000,
+  "closedate": "2023-12-31",
+  "stage": "Negotiation",
+  "forecastcategory": "pipeline"
+},
+{
+  "id": "001D000000KQO2Y",
+  "name": "BENIEL",
+  "amount": 15000,
+  "closedate": "2023-11-30",
+  "stage": "Prospecting",
+  "forecastcategory": "closed"
+}]

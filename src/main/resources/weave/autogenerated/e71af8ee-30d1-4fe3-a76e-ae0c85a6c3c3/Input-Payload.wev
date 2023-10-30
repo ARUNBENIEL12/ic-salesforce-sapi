@@ -1,0 +1,11 @@
+%dw 2.0
+
+type auto_e71af8ee_30d1_4fe3_a76e_ae0c85a6c3c3_Input_Payload = {
+  amount: Number, 
+  closedate: String, 
+  stage: String, 
+  name: String, 
+  forecastcategory: String, 
+  _?: Any
+} {"description": "adding new user"}
+

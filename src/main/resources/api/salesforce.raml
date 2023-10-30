@@ -1,0 +1,97 @@
+#%RAML 1.0
+title: ic-opportunities-sapis
+description: salesforce opportunities Integrations
+version: v1
+protocols: [HTTPS]
+mediaType: 
+  - application/json
+
+traits: 
+    client-id-required:
+      headers:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+    trackingParams:
+     headers:
+      X-Correlation-ID:
+        description: A unique identifier for this message, to enable tracking, reporting, and correlation.
+        type: string
+        required: true
+resourceTypes:
+  commonresourceType: !include /resourcetype/AllCollections.raml
+
+uses:
+  errordataType:  /resources/libraries/ErrorDataType.raml
+  opportunityCreateDataType:  /resources/libraries/PostOpportunityDataType.raml
+  opportunityUpdateDataType:  /resources/libraries/PutOpportunityDataType.raml
+  opportunityGetDatatype: /resources/libraries/GetOppurtunityDataType.raml
+  opportunityGetbyIdDatatype: /resources/libraries/GetOpportunityByIdDataType.raml
+  opportunityDeleteDatatype: /resources/libraries/DeleteOpportunityDataType.raml
+
+
+
+/opportunities:
+  type:
+    commonresourceType:
+      get-response-example: !include /Example/response/getExample.json
+      get-response-schema: opportunityGetDatatype.get_oppurtunity_response 
+      post-request-example: !include /Example/request/postExample.json
+      post-request-schema: opportunityCreateDataType.post_oppurtunity_request
+      post-response-example: !include /Example/response/createExample.json
+      post-response-schema: opportunityCreateDataType.post_opportunity_response
+      errors-schema: errordataType.error
+  get:
+    is:
+      - trackingParams
+      - client-id-required
+  post:
+    is:
+      - client-id-required 
+      - trackingParams
+     
+    
+  
+  /{id}:
+    type:
+      commonresourceType:
+        put-request-schema: opportunityUpdateDataType.put_oppurtunity_request
+        put-request-example: !include /Example/request/putExample.json
+        put-response-example: !include /Example/response/updateExample.json
+        put-response-schema: opportunityUpdateDataType.put_opportunity_response
+        get-response-schema: opportunityGetbyIdDatatype.get_oppurtunityby_Id_response
+        get-response-example: !include /Example/response/getExample.json
+        delete-response-example: !include /Example/response/deleteExample.json
+        delete-response-schema: opportunityDeleteDatatype.delete
+        errors-schema: errordataType.error
+    get:
+      is: 
+      - trackingParams
+      - client-id-required
+    delete:
+      is:
+        - trackingParams
+        - client-id-required
+    put:
+      is:
+        - trackingParams
+        - client-id-required 
+        
+         
+
+    
+      
+
+
+
+
+
+
+                                                                                                                                  
+
+        
+                                                  
+
+                    
+               

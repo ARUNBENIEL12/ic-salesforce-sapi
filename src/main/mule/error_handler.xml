@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="error-handlerError_Handler" doc:id="6596ab54-ba5f-4e76-84ca-4eebcf527371" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="a3565463-e424-45f1-a374-2628fad12962" type="SALESFORCE:NOT_FOUND">
+			<ee:transform doc:name="Transform Message" doc:id="a9c64e71-feb2-4a2d-94af-72d2bc180f07" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "is_success": false,
+    "errors": [
+        {
+            "error_code": "404",
+            "error_message": "Not Found"
+        }
+    ]
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ff37d979-de1b-432e-ba82-ca2569538986" type="SALESFORCE:INVALID_INPUT">
+			<ee:transform doc:name="Transform Message" doc:id="d97c5135-6624-4b10-9f69-3f22c0812fc3" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "is_success": false,
+    "errors": [
+        {
+            "error_code": "400",
+            "error_message": "Bad Request"
+        }
+    ]
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="5773d2d3-61d3-4bc2-b6c6-f116d538bad1" type="APIKIT:BAD_REQUEST">
+			<ee:transform doc:name="Transform Message" doc:id="f245929d-b5b3-4056-87a8-7b1da83a9d16" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "is_success": false,
+    "errors": [
+        {
+            "error_code": "400",
+            "error_message": error.cause.message      }
+    ]
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="8c598db7-604a-40d2-a6f6-466b524a7e88" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="18c568c6-ba24-45cf-840a-1cc418642c2a" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "is_success": false,
+    "errors": [
+        {
+            "error_code": "500",
+            "error_message": "Internal Server Error"
+        }
+    ]
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+	
+</error-handler>
+</mule>
